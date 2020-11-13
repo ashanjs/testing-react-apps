@@ -31,3 +31,29 @@ test(`logging in displays the user's username`, async () => {
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
   expect(screen.getByText(username)).toBeInTheDocument()
 })
+
+test(`username is not provided`, async () => {
+  render(<Login />)
+  const { password } = buildLoginForm()
+
+  //userEvent.type(screen.getByLabelText(/username/i), username)
+  //username is not provided
+  userEvent.type(screen.getByLabelText(/password/i), password)
+  userEvent.click(screen.getByRole('button', { name: /submit/i }))
+
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+  expect(screen.getByRole('alert')).toHaveTextContent(/username required/i)
+})
+
+test(`password is not provided`, async () => {
+  render(<Login />)
+  const { username } = buildLoginForm()
+
+  userEvent.type(screen.getByLabelText(/username/i), username)
+  //userEvent.type(screen.getByLabelText(/password/i), password)
+  //password is not provided
+  userEvent.click(screen.getByRole('button', { name: /submit/i }))
+
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+  expect(screen.getByRole('alert')).toHaveTextContent(/password required/i)
+})
