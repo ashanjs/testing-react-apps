@@ -2,12 +2,12 @@
 // http://localhost:3000/login-submission
 
 import * as React from 'react'
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
+import {render, screen, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { build, fake } from '@jackfranklin/test-data-bot'
-import { setupServer } from 'msw/node'
+import {build, fake} from '@jackfranklin/test-data-bot'
+import {setupServer} from 'msw/node'
 import Login from '../../components/login-submission'
-import { handlers } from 'test/server-handlers.js'
+import {handlers} from 'test/server-handlers.js'
 
 const buildLoginForm = build({
   fields: {
@@ -22,11 +22,11 @@ afterAll(() => server.close())
 
 test(`logging in displays the user's username`, async () => {
   render(<Login />)
-  const { username, password } = buildLoginForm()
+  const {username, password} = buildLoginForm()
 
   userEvent.type(screen.getByLabelText(/username/i), username)
   userEvent.type(screen.getByLabelText(/password/i), password)
-  userEvent.click(screen.getByRole('button', { name: /submit/i }))
+  userEvent.click(screen.getByRole('button', {name: /submit/i}))
 
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
   expect(screen.getByText(username)).toBeInTheDocument()
@@ -34,26 +34,30 @@ test(`logging in displays the user's username`, async () => {
 
 test(`username is not provided`, async () => {
   render(<Login />)
-  const { password } = buildLoginForm()
+  const {password} = buildLoginForm()
 
   //userEvent.type(screen.getByLabelText(/username/i), username)
   //username is not provided
   userEvent.type(screen.getByLabelText(/password/i), password)
-  userEvent.click(screen.getByRole('button', { name: /submit/i }))
+  userEvent.click(screen.getByRole('button', {name: /submit/i}))
 
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
-  expect(screen.getByRole('alert')).toHaveTextContent(/username required/i)
+  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    `"username required"`,
+  )
 })
 
 test(`password is not provided`, async () => {
   render(<Login />)
-  const { username } = buildLoginForm()
+  const {username} = buildLoginForm()
 
   userEvent.type(screen.getByLabelText(/username/i), username)
   //userEvent.type(screen.getByLabelText(/password/i), password)
   //password is not provided
-  userEvent.click(screen.getByRole('button', { name: /submit/i }))
+  userEvent.click(screen.getByRole('button', {name: /submit/i}))
 
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
-  expect(screen.getByRole('alert')).toHaveTextContent(/password required/i)
+  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    `"password required"`,
+  )
 })
