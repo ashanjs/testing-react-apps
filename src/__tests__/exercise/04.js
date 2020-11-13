@@ -2,11 +2,30 @@
 // http://localhost:3000/login
 
 import * as React from 'react'
-import {render, screen} from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Login from '../../components/login'
 
 test('submitting the form calls onSubmit with username and password', () => {
+  let submittedData
+  const handleSubmit = data => (submittedData = data)
+
+  render(<Login onSubmit={handleSubmit} />)
+
+  const username = screen.getByLabelText(/Username/i)
+  const password = screen.getByLabelText(/Password/i)
+
+  userEvent.type(username, 'asha')
+  userEvent.type(password, 'pass')
+
+  const submitButton = screen.getByRole('button', { name: /Submit/i })
+  userEvent.click(submitButton)
+
+  expect(submittedData).toEqual(
+    {
+      username: 'asha',
+      password: 'pass'
+    })
   // 🐨 create a variable called "submittedData" and a handleSubmit function that
   // accepts the data and assigns submittedData to the data that was submitted
   // 💰 if you need a hand, here's what the handleSubmit function should do:
